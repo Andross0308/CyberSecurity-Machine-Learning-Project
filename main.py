@@ -91,8 +91,7 @@ if __name__ == '__main__':
 
     print("============================================= XBB Classifier ==============================================\n")
 
-
-
+    "frjgersogrg"
     model_XBB = XGBClassifier(learning_rate=0.01, max_depth=7, n_estimators=100, scale_pos_weight=25, subsample=1.0)
     model_XBB.fit(X_train, Y_train)
     XBB_prediction = model_XBB.predict(X_test)
