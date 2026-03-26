@@ -8,7 +8,8 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import GridSearchCV
+from seaborn import heatmap
+import matplotlib.pyplot as plt
 
 def separate_Info(testData, trainData):
     X_train = trainData.drop(columns="class")
@@ -66,7 +67,7 @@ if __name__ == '__main__':
 
     best_model = grid_search.best_estimator_
     y_pred = best_model.predict(X_test)
-    print(classification_report(Y_test, y_pred))"""
+    print(classification_report(Y_test, y_pred))
 
     model_DecisionTree = DecisionTreeClassifier(min_samples_split=2, criterion="entropy", max_depth=30, class_weight='balanced')
     model_DecisionTree.fit(X_train, Y_train)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     report_RandomForest = classification_report(Y_test, y_prediction)
     print("matrix: \n", matrix_RandomForest)
     print("report: \n", report_RandomForest)
-
+"""
     print("============================================= XBB Classifier ==============================================\n")
 
 
@@ -98,7 +99,14 @@ if __name__ == '__main__':
     report_XBB = classification_report(Y_test, XBB_prediction)
     print("matrix: \n", matrix_XBB)
     print("report: \n", report_XBB)
+    heatmap = heatmap(matrix_XBB, cmap="Greens", annot=True, xticklabels=["Normal", "Anomaly"],
+                      yticklabels=["Normal", "Anomaly"], fmt='d', annot_kws={'size': 20})
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title("XGB Classifier Confusion Matrix")
+    plt.savefig("Results/Xbb_matrix.png")
 
+"""
     print("============================================= K Nearest Neighbours =========================================\n")
     scaler = RobustScaler()
     scaler_train = scaler.fit_transform(X_train)
@@ -113,4 +121,4 @@ if __name__ == '__main__':
     matrix_KNN = confusion_matrix(Y_test, KNN_Predictions)
     report_KNN = classification_report(Y_test, KNN_Predictions)
     print("matrix: \n", matrix_KNN)
-    print("report: \n", report_KNN)
+    print("report: \n", report_KNN)"""
