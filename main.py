@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from xgboost import XGBClassifier
 from sklearn.preprocessing import TargetEncoder
 from sklearn.preprocessing import LabelEncoder
@@ -51,29 +52,13 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = separate_Info(df_test, df_train)
 
 
-    """recall_class = make_scorer(recall_score, pos_label=0)
-    param_grid = {
-        'n_neighbors': [3, 5, 7, 11],  # Valores ímpares evitam empates
-        'weights': ['uniform', 'distance'],  # 'distance' dá mais peso aos vizinhos mais próximos
-        'metric': ['euclidean', 'manhattan']
-    }
 
-    model = KNeighborsClassifier()
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='recall')
-    grid_search.fit(X_train, Y_train)
-
-    print(f"Best Score: {grid_search.best_score_}")
-    print(f"Best Parameters: {grid_search.best_params_}")
-
-    best_model = grid_search.best_estimator_
-    y_pred = best_model.predict(X_test)
-    print(classification_report(Y_test, y_pred))
 
     model_DecisionTree = DecisionTreeClassifier(min_samples_split=2, criterion="entropy", max_depth=30, class_weight='balanced')
     model_DecisionTree.fit(X_train, Y_train)
     y_prediction_Decision_tree = model_DecisionTree.predict(X_test)
     matrix_DecisionTree = confusion_matrix(Y_test, y_prediction_Decision_tree)
-    report_DecisionTree = classification_report(Y_test, y_prediction_Decision_tree)
+    report_DecisionTree = classification_report(Y_test, y_prediction_Decision_tree, output_dict=True)
     print("matrix: \n", matrix_DecisionTree)
     print("report: \n", report_DecisionTree)
 
@@ -81,22 +66,18 @@ if __name__ == '__main__':
     model_RF = RandomForestClassifier(random_state=100, min_samples_split=2)
     model_RF.fit(X_train, Y_train)
     y_prediction = model_RF.predict(X_test)
-    features = model_RF.feature_importances_
-    s = pd.Series(features, index=X_test.columns).sort_values(ascending=False)
-    print(s)
     matrix_RandomForest = confusion_matrix(Y_test, y_prediction)
-    report_RandomForest = classification_report(Y_test, y_prediction)
+    report_RandomForest = classification_report(Y_test, y_prediction, output_dict=True)
     print("matrix: \n", matrix_RandomForest)
     print("report: \n", report_RandomForest)
-"""
-    print("============================================= XBB Classifier ==============================================\n")
 
+    print("============================================= XBB Classifier ==============================================\n")
 
     model_XBB = XGBClassifier(learning_rate=0.01, max_depth=7, n_estimators=100, scale_pos_weight=25, subsample=1.0)
     model_XBB.fit(X_train, Y_train)
     XBB_prediction = model_XBB.predict(X_test)
     matrix_XBB = confusion_matrix(Y_test, XBB_prediction)
-    report_XBB = classification_report(Y_test, XBB_prediction)
+    report_XBB = classification_report(Y_test, XBB_prediction, output_dict=True)
     print("matrix: \n", matrix_XBB)
     print("report: \n", report_XBB)
     heatmap = heatmap(matrix_XBB, cmap="Greens", annot=True, xticklabels=["Normal", "Anomaly"],
@@ -106,7 +87,6 @@ if __name__ == '__main__':
     plt.title("XGB Classifier Confusion Matrix")
     plt.savefig("Results/Xbb_matrix.png")
 
-"""
     print("============================================= K Nearest Neighbours =========================================\n")
     scaler = RobustScaler()
     scaler_train = scaler.fit_transform(X_train)
@@ -119,6 +99,29 @@ if __name__ == '__main__':
     classifier.fit(X_train, Y_train)
     KNN_Predictions = classifier.predict(X_test)
     matrix_KNN = confusion_matrix(Y_test, KNN_Predictions)
-    report_KNN = classification_report(Y_test, KNN_Predictions)
+    report_KNN = classification_report(Y_test, KNN_Predictions, output_dict=True)
     print("matrix: \n", matrix_KNN)
-    print("report: \n", report_KNN)"""
+    print("report: \n", report_KNN)
+
+    models = ['Decision Tree', 'Random Forest', 'XGBoost', 'KNN']
+    recall_anomaly = [report_DecisionTree['1']['recall'],  report_RandomForest['1']['recall'],
+                      report_XBB['1']['recall'], report_KNN['1']['recall']]
+    precision_anomaly = [report_DecisionTree['1']['precision'],  report_RandomForest['1']['precision'],
+                      report_XBB['1']['precision'], report_KNN['1']['precision']]
+    recall_normal = [report_DecisionTree['0']['recall'],  report_RandomForest['0']['recall'],
+                      report_XBB['0']['recall'], report_KNN['0']['recall']]
+    precision_normal = [report_DecisionTree['0']['precision'],  report_RandomForest['0']['precision'],
+                      report_XBB['0']['precision'], report_KNN['0']['precision']]
+
+    w, x = 0.2, np.arange(len(models))
+
+    fig, ax = plt.subplots()
+    ax.bar(x - 0.4, recall_anomaly, width=w, label='recall_anomally')
+    ax.bar(x - 0.2, precision_anomaly, width=w, label='precision_anomally')
+    ax.bar(x + 0.2 , precision_normal, width=w, label='precision_normal')
+    ax.bar(x, recall_normal, width=w, label='recall_normal')
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(models)
+
+    plt.savefig("Results/Graph.png")
