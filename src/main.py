@@ -1,9 +1,8 @@
-import pandas as pd
 import numpy as np
 import config
+from data_loader import get_open_file
+from PreProcessor import encodeDataFrame, scaleDataFrame
 from xgboost import XGBClassifier
-from sklearn.preprocessing import TargetEncoder
-from sklearn.preprocessing import RobustScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
@@ -12,51 +11,15 @@ from sklearn.neighbors import KNeighborsClassifier
 from seaborn import heatmap
 import matplotlib.pyplot as plt
 
-def separate_Info(testData, trainData):
-    X_train = trainData.drop(columns=config.CLASS_COLUMN)
-    X_test = testData.drop(columns=config.CLASS_COLUMN)
-    Y_train = trainData[config.CLASS_COLUMN]
-    Y_test = testData[config.CLASS_COLUMN]
-    return X_train, X_test, Y_train, Y_test
-
-def encode_DataFrame(DataFrame, encoder, test=False):
-    X = DataFrame[config.ENCODER_COLUMNS]
-    Y = DataFrame[config.CLASS_COLUMN]
-    if test:
-        print("Test file")
-        return encoder.transform(X)
-    else:
-        print("Train file")
-        return encoder.fit_transform(X,Y)
-
 
 if __name__ == '__main__':
 
     #Read First CSV
-    df_train = pd.read_csv(config.DATA_FILE_PATH + config.TRAIN_FILE, sep=config.COMMA)
-
-    #Clean DataBase
-    df_train.drop(columns=config.DROP_COLUMNS, inplace=True)
-
-    #Encode Strings in DataBase
-    encoder = TargetEncoder()
-    one_hot_encoder = encode_DataFrame(df_train, encoder)
-    df_train[config.ENCODER_COLUMNS] = one_hot_encoder
-    df_train[config.CLASS_COLUMN] = df_train[config.CLASS_COLUMN].map(config.CLASS_MAP)
-
-    #Read Second CSV
-    df_test = pd.read_csv(config.DATA_FILE_PATH + config.TEST_FILE, sep=config.COMMA)
-
-    #Clean DataBase
-    df_test.drop(columns=config.DROP_COLUMNS, inplace=True)
-
-    #Encode String in DatBase
-    one = encode_DataFrame(df_test, encoder, test=True)
-    df_test[config.ENCODER_COLUMNS] = one
-    df_test[config.CLASS_COLUMN] = df_test[config.CLASS_COLUMN].map(config.CLASS_MAP)
+    df_train = get_open_file(config.TRAIN_FILE)
+    df_test = get_open_file(config.TEST_FILE)
 
     #Split DataBase
-    X_train, X_test, Y_train, Y_test = separate_Info(df_test, df_train)
+    X_train, X_test, Y_train, Y_test = encodeDataFrame(df_train, df_test)
 
     #First model: Decision Tree
     model_DecisionTree = DecisionTreeClassifier(min_samples_split=config.MIN_SAMPLE_SPLIT,
@@ -104,17 +67,11 @@ if __name__ == '__main__':
 
     #Fourth Model
     print("============================================= K Nearest Neighbours =========================================\n")
-    scaler = RobustScaler()
-    scaler_train = scaler.fit_transform(X_train)
-    scaler_test = scaler.transform(X_test)
-    df_train[X_train.columns] = scaler_train
-    X_train = df_train[X_train.columns]
-    df_test[X_test.columns] = scaler_test
-    X_test = df_test[X_test.columns]
+    X_train_scaled, X_test_scaled = scaleDataFrame(X_train, X_test)
     classifier = KNeighborsClassifier(metric=config.KNN_METRIC, n_neighbors=config.KNN_N_NEIGHBORS,
                                       weights=config.KNN_WEIGHTS)
-    classifier.fit(X_train, Y_train)
-    KNN_Predictions = classifier.predict(X_test)
+    classifier.fit(X_train_scaled, Y_train)
+    KNN_Predictions = classifier.predict(X_test_scaled)
     matrix_KNN = confusion_matrix(Y_test, KNN_Predictions)
     report_KNN = classification_report(Y_test, KNN_Predictions, output_dict=True)
     print("matrix: \n", matrix_KNN)
