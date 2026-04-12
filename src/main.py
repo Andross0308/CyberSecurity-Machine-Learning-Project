@@ -14,6 +14,7 @@ if __name__ == '__main__':
     #Split DataBase
     X_train, X_test, Y_train, Y_test = encodeDataFrame(df_train, df_test)
 
+    #Trains all the models
     results = get_trained_models(X_train, Y_train, X_test, Y_test)
     print(results)
 
