@@ -44,6 +44,7 @@ ANOMALY_INTEGER = '1'
 RECALL = 'recall'
 PRECISION = 'precision'
 WIDTH = 0.2
+BAR_PLOT_TITLE = "Model Comparison - Precision & Recall"
 BAR_PLOT_X_LABEL = "Models"
 BAR_PLOT_Y_VALUES = "Values"
 BAR_PLOT_LEGEND = ["precision Normal", "recall Normal", "precision Anomaly", "recall Anomaly"]

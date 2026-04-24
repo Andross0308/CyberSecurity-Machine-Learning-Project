@@ -3,7 +3,12 @@ import numpy as np
 import config
 import matplotlib.pyplot as plt
 
-def visualizerGenerateHeatMap(matrix):
+def visualizer_generate_heat_map(matrix):
+    """
+    Creates a Heat Map with the XGBClassifier matrix(the model with best recall for anomalies)
+    :param matrix: Results of the XGBClassifier
+    :return: a png file of the matrix
+    """
     heatmap(matrix, cmap=config.COLOR_MAP, annot=True, xticklabels=config.TICK_LABELS,
             yticklabels=config.TICK_LABELS, fmt=config.FORMAT, annot_kws=config.FONT_SIZE)
     plt.xlabel(config.HEATMAP_X_LABEL)
@@ -12,8 +17,12 @@ def visualizerGenerateHeatMap(matrix):
     plt.savefig(config.RESULT_FILE_PATH + config.MATRIX_IMAGE_FILE)
     plt.clf()
 
-def GenerateBarChart(report):
-
+def generate_bar_chart(report):
+    """
+    Creates the chart to compare the values of all the moduls in their precision and recall
+    :param report: A dict with the precision and recall of all models
+    :return: a png file of the created graph
+    """
     precision_normal = [report[m]['report'][config.NORMAL_INTEGER][config.PRECISION] for m in config.MODELS]
     recall_normal = [report[m]['report'][config.NORMAL_INTEGER][config.RECALL] for m in config.MODELS]
     precision_anomaly = [report[m]['report'][config.ANOMALY_INTEGER][config.PRECISION] for m in config.MODELS]
@@ -29,5 +38,6 @@ def GenerateBarChart(report):
     plt.ylabel(config.BAR_PLOT_Y_VALUES)
     plt.xticks(x, config.MODELS)
     plt.legend(config.BAR_PLOT_LEGEND)
+    plt.title(config.BAR_PLOT_TITLE)
 
     plt.savefig(config.RESULT_FILE_PATH + config.BAR_PLOT_FILE)

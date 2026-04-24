@@ -2,7 +2,7 @@ import config
 from data_loader import get_open_file
 from ModelManager import get_trained_models
 from PreProcessor import encodeDataFrame
-from visualizer import visualizerGenerateHeatMap, GenerateBarChart
+from visualizer import visualizer_generate_heat_map, generate_bar_chart
 
 
 if __name__ == '__main__':
@@ -18,5 +18,5 @@ if __name__ == '__main__':
     results = get_trained_models(X_train, Y_train, X_test, Y_test)
     print(results)
 
-    visualizerGenerateHeatMap(results['XGBoost']['matrix'])
-    GenerateBarChart(results)
+    visualizer_generate_heat_map(results['XGBoost']['matrix'])
+    generate_bar_chart(results)
