@@ -14,17 +14,17 @@ This project implements a Network Intrusion Detection System (NIDS) using Machin
 ### Project Structure:
 
 ├── data/ <br>
-│   ├── KDDTest.arff
-│   └── KDDTrain.arff
+│   ├── KDDTest.arff <br>
+│   └── KDDTrain.arff <br>
 
-├── src/ 
-│   ├── main.py 
-│   ├── config.py 
-│   ├── data_loader.py 
-│   ├── PreProcessor.py 
-│   ├── ModelManager.py 
-│   └── Visualizer.py 
-├── Results/
-│   ├── Graph.png
-│   └── XBBMatrix.png
-└── README.md
+├── src/ <br>
+│   ├── main.py <br>
+│   ├── config.py <br>
+│   ├── data_loader.py <br>
+│   ├── PreProcessor.py <br>
+│   ├── ModelManager.py <br>
+│   └── Visualizer.py <br>
+├── Results/ <br>
+│   ├── Graph.png <br>
+│   └── XBBMatrix.png <br>
+└── README.md <br>
