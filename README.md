@@ -10,3 +10,19 @@ This project implements a Network Intrusion Detection System (NIDS) using Machin
 - Seaborn 0.13.2
 - Matplotlib 3.10.8
 - Numpy 2.4.3
+
+### Project Structure:
+├── data/ 
+│ 	├── KDDTest.arff
+│ 	└── KDDTrain.arff
+├── src/ 
+│ 	├── main.py 
+│ 	├── config.py 
+│ 	├── data_loader.py 
+│ 	├── PreProcessor.py 
+│ 	├── ModelManager.py 
+│ 	└── Visualizer.py 
+├── Results/
+│ 	├──Graph.png
+│ 	└──XBBMatrix.png
+└── README.md
