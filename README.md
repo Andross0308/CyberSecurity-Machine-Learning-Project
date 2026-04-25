@@ -12,9 +12,13 @@ This project implements a Network Intrusion Detection System (NIDS) using Machin
 - Numpy 2.4.3
 
 ### Project Structure:
+
 ├── data/ 
+
 │   ├── KDDTest.arff
+
 │   └── KDDTrain.arff
+
 ├── src/ 
 │   ├── main.py 
 │   ├── config.py 
