@@ -16,7 +16,6 @@ This project implements a Network Intrusion Detection System (NIDS) using Machin
 ├── data/ <br>
 │   ├── KDDTest.arff <br>
 │   └── KDDTrain.arff <br>
-
 ├── src/ <br>
 │   ├── main.py <br>
 │   ├── config.py <br>
