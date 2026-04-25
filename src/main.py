@@ -7,7 +7,7 @@ from visualizer import visualizer_generate_heat_map, generate_bar_chart
 
 if __name__ == '__main__':
 
-    #Read First CSV
+    #Read CSVs
     df_train = get_open_file(config.TRAIN_FILE)
     df_test = get_open_file(config.TEST_FILE)
 

@@ -8,7 +8,16 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 
 
-def ModelPipeline(model, X_train, Y_train, X_test, Y_test):
+def model_pipeline(model, X_train, Y_train, X_test, Y_test):
+    """
+    Trains and tests the given model and gives the results
+    :param model: Model that is used in the pipeline
+    :param X_train: Training values for the model
+    :param Y_train: Training class for the model
+    :param X_test: Testing values for the model
+    :param Y_test: Testing class for the model
+    :return: a 2x2 matrix with the results and a dict with the precision and recall of the model
+    """
     model.fit(X_train, Y_train)
     y_prediction = model.predict(X_test)
     matrix = confusion_matrix(Y_test, y_prediction)
@@ -17,6 +26,14 @@ def ModelPipeline(model, X_train, Y_train, X_test, Y_test):
 
 
 def get_trained_models(X_train, Y_train, X_test, Y_test):
+    """
+    Trains and tests all the models and gives the results
+    :param X_train: Training values for the models
+    :param Y_train: Training class for the models
+    :param X_test: Testing values for the models
+    :param Y_test: Testing class for the models
+    :return: a dict with the results of the models
+    """
     models = {
         "Decision Tree": DecisionTreeClassifier(min_samples_split=config.MIN_SAMPLE_SPLIT,
                                             criterion=config.DECISION_TREE_CRITERION,
@@ -31,15 +48,14 @@ def get_trained_models(X_train, Y_train, X_test, Y_test):
 
     results = {}
     for name, model in models.items():
-        matrix, report = ModelPipeline(model, X_train, Y_train, X_test, Y_test)
+        matrix, report = model_pipeline(model, X_train, Y_train, X_test, Y_test)
         results[name] = {"matrix": matrix, "report": report}
         print(f"{name} Done")
 
     X_train_scaled, X_test_scaled = scaleDataFrame(X_train, X_test)
     model =  KNeighborsClassifier(metric=config.KNN_METRIC, n_neighbors=config.KNN_N_NEIGHBORS,
                                   weights=config.KNN_WEIGHTS)
-    matrix, report = ModelPipeline(model, X_train, Y_train, X_test, Y_test)
+    matrix, report = model_pipeline(model, X_train_scaled, Y_train, X_test_scaled, Y_test)
     results["KNN"] = {"matrix": matrix, "report": report}
     print("KNN")
-
     return results
