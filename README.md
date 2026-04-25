@@ -13,7 +13,7 @@ This project implements a Network Intrusion Detection System (NIDS) using Machin
 
 ### Project Structure:
 
-├── data/ 
+├── data/ <br>
 │   ├── KDDTest.arff
 │   └── KDDTrain.arff
 
