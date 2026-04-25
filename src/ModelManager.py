@@ -34,28 +34,26 @@ def get_trained_models(X_train, Y_train, X_test, Y_test):
     :param Y_test: Testing class for the models
     :return: a dict with the results of the models
     """
+    X_train_scaled, X_test_scaled = scaleDataFrame(X_train, X_test)
     models = {
-        "Decision Tree": DecisionTreeClassifier(min_samples_split=config.MIN_SAMPLE_SPLIT,
+        "Decision Tree": (DecisionTreeClassifier(min_samples_split=config.MIN_SAMPLE_SPLIT,
                                             criterion=config.DECISION_TREE_CRITERION,
                                             max_depth=config.DECISION_TREE_MAX_DEPTH,
-                                            class_weight=config.DECISION_TREE_CLASS_WEIGHT),
-        "Random Forest": RandomForestClassifier(random_state=config.RANDOM_FOREST_RANDOM_STATE,
-                                  min_samples_split=config.MIN_SAMPLE_SPLIT),
-        "XGBoost": XGBClassifier(learning_rate=config.XGB_LEARNING_RATE, max_depth=config.XGB_MAX_DEPTH,
+                                            class_weight=config.DECISION_TREE_CLASS_WEIGHT), lambda: (X_train, X_test)),
+        "Random Forest": (RandomForestClassifier(random_state=config.RANDOM_FOREST_RANDOM_STATE,
+                                  min_samples_split=config.MIN_SAMPLE_SPLIT), lambda: (X_train, X_test)),
+        "XGBoost": (XGBClassifier(learning_rate=config.XGB_LEARNING_RATE, max_depth=config.XGB_MAX_DEPTH,
                           n_estimators=config.XGB_N_ESTIMATORS, scale_pos_weight=config.XGB_SCALE_POS_WEIGHT,
-                          subsample=config.XGB_SUBSAMPLE)
+                          subsample=config.XGB_SUBSAMPLE), lambda: (X_train, X_test)),
+        "KNN": (KNeighborsClassifier(metric=config.KNN_METRIC, n_neighbors=config.KNN_N_NEIGHBORS,
+                             weights=config.KNN_WEIGHTS), lambda: (X_train_scaled, X_test_scaled))
     }
 
     results = {}
-    for name, model in models.items():
-        matrix, report = model_pipeline(model, X_train, Y_train, X_test, Y_test)
+    for name, (model, get_data) in models.items():
+        current_X_train, current_X_test = get_data()
+        matrix, report = model_pipeline(model, current_X_train, Y_train, current_X_test, Y_test)
         results[name] = {"matrix": matrix, "report": report}
         print(f"{name} Done")
 
-    X_train_scaled, X_test_scaled = scaleDataFrame(X_train, X_test)
-    model =  KNeighborsClassifier(metric=config.KNN_METRIC, n_neighbors=config.KNN_N_NEIGHBORS,
-                                  weights=config.KNN_WEIGHTS)
-    matrix, report = model_pipeline(model, X_train_scaled, Y_train, X_test_scaled, Y_test)
-    results["KNN"] = {"matrix": matrix, "report": report}
-    print("KNN")
     return results
